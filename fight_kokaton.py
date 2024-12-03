@@ -149,6 +149,10 @@ class Bomb:
 
 
 class Score:
+    """
+    スコア表示に関するクラス
+    """
+
     def __init__(self):
         self.fonto = pg.font.SysFont("hgp創英角ﾎﾟｯﾌﾟ体", 30)
         self.color = (0, 0, 255)
@@ -163,6 +167,10 @@ class Score:
 
 
 class Explosion:
+    """
+    爆発エフェクトに関するクラス
+    """
+
     def __init__(self, xy: tuple[int, int]):
         self.img = [
             pg.image.load("fig/explosion.gif"),
