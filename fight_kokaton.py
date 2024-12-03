@@ -188,12 +188,13 @@ def main():
     bomb = Bomb((255, 0, 0), 10)
     # bomb2 = Bomb((0,0,255), 20)
     bombs = [Bomb((255, 0, 0), 10) for _ in range(NUM_OF_BOMBS)]
-    beam = None  # Beam(bird)  # ビームインスタンス生成
+    # beam = None  # Beam(bird)  # ビームインスタンス生成
     clock = pg.time.Clock()
     tmr = 0
 
     score = Score()
     explosions = []
+    beams = []
 
     while True:
         for event in pg.event.get():
@@ -201,7 +202,7 @@ def main():
                 return
             if event.type == pg.KEYDOWN and event.key == pg.K_SPACE:
                 # スペースキー押下でBeamクラスのインスタンス生成
-                beam = Beam(bird)
+                beams.append(Beam(bird))
         screen.blit(bg_img, [0, 0])
 
         for bomb in bombs:
@@ -216,10 +217,11 @@ def main():
                 return
 
         for i, bomb in enumerate(bombs):
-            if beam is not None:
-                if beam.rct.colliderect(bomb.rct):  # ビームが爆弾を打ち落としたら
+          for j ,beam in enumerate(beams):
+            if beams[j] is not None and bombs[i] is not None:
+                if beams[j].rct.colliderect(bomb.rct):  # ビームが爆弾を打ち落としたら
                     explosions.append(Explosion(bombs[i].rct.center))
-                    beam = None
+                    beams[j] = None
                     bombs[i] = None
                     bird.change_img(6, screen)
                     score.update(screen, 1)
@@ -229,13 +231,24 @@ def main():
         bird.update(key_lst, screen)
         # beam.update(screen)
         bombs = [bomb for bomb in bombs if bomb is not None]  # Noneではないリスト
+        beams = [beam for beam in beams if beam is not None]  # Noneではないリスト
         for bomb in bombs:
             bomb.update(screen)
-        if bomb is not None:
-            bomb.update(screen)
+        # if bomb is not None:
+        #     bomb.update(screen)
         # bomb2.update(screen)
-        if beam is not None:
+
+        tmp_num = 0
+        for i,beam in enumerate(beams):
+          if check_bound(beams[i-tmp_num].rct) != (True, True):
+              del beams[i-tmp_num]
+              tmp_num+=1
+              print(beams)
+
+        for beam in beams:
             beam.update(screen)
+        # if beam is not None:
+        #     beam.update(screen)
         explosions = [
             explosion for explosion in explosions if explosion.life > 0
         ]  # Noneではないリスト
